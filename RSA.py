@@ -3,18 +3,18 @@ def main():
     numbers = inputNumbers.split(",")
     num1 = int(numbers[0])
     num2 = int(numbers[1])
-    if not isinstance(num1, int) or not isinstance(num2, int):
-        return
+    # if not isinstance(num1, int) or not isinstance(num2, int):
+    #     return
     if not isPrime(num1) or not isPrime(num2):
         return
     n = num1 * num2
     print("소수1: " + str(num1))
     print("소수2: " + str(num2))
-    print(n)
+    print("N: " + str(n))
     PHI = phi(num1, num2)
     print("피함수: " + str(PHI))
     vaildNumber = createExponent(PHI)
-    e = input(str(vaildNumber) + " 중 수 하나를 선택하여 암호화 지수를 생성하여 주세요. ")
+    e = input(str(vaildNumber) + " 중 하나를 선택하여 암호화 지수를 생성하여 주세요. ")
     e = int(e)
     if not e in vaildNumber:
         return
@@ -22,8 +22,10 @@ def main():
     solution = extendEuclid(e, PHI)
     d = -1
     for i in solution:
+        if i < 0:
+            i += PHI
         tmp = (e*i)-1
-        if tmp >= PHI and tmp % 20 == 0:
+        if tmp >= PHI and tmp % PHI == 0:
             d = i
     print("복호화 지수: " + str(d))
 
@@ -52,12 +54,12 @@ def createExponent(num):
         numbers.append(i) 
     for i in cd:
         operand = int(num / i)
+        print(i)
         for i2 in range(1, operand):
-            if i*i2 in numbers:
-                numbers.remove(i*i2)
-        cd.remove(i)
+            mul = i*i2
+            if mul in numbers:
+                numbers.remove(mul)
         cd.remove(operand)
-
     return numbers
 
 def extendEuclid(a, b):
