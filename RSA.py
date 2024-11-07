@@ -54,7 +54,6 @@ def createExponent(num):
         numbers.append(i) 
     for i in cd:
         operand = int(num / i)
-        print(i)
         for i2 in range(1, operand):
             mul = i*i2
             if mul in numbers:
