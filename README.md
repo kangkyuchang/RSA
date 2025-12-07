@@ -18,7 +18,7 @@ RSA 암호화 알고리즘의 핵심인 **키 생성 과정**을 파이썬으로
 
 3. **암호화 지수(e) 선택**  
    - 조건 1: $1 < e < \varphi(N)$  
-   - 조건 2: $\gcd(e,\ \varphi(N) = 1$ 즉, ($e와\ \varphi(N)$은 서로소)
+   - 조건 2: $\gcd(e,\ \varphi(N)) = 1$ 즉, ($e와\ \varphi(N)$은 서로소)
 
 4. **복호화 지수(d) 계산**  
    $(e \cdot d) \mod \varphi(N) \equiv 1$
@@ -34,7 +34,7 @@ RSA 암호화 알고리즘의 핵심인 **키 생성 과정**을 파이썬으로
 |--------|------|-------------|
 | isPrime() | 소수 검증 | $\sqrt{n}$까지 나눗셈 검사 |
 | phi() | 오일러 피 함수 | $\varphi(N) = (p-1)(q-1)$ |
-| createExponent() | 유효한 e 생성 | $\gcd(e,\ \varphi(N) = 1$ |
+| createExponent() | 유효한 e 생성 | $\gcd(e,\ \varphi(N)) = 1$ |
 | extendEuclid() | 모듈러 역원 계산 | $(e \cdot d) \mod \varphi(N) \equiv 1$
 
 # 향후 개선 방향  
