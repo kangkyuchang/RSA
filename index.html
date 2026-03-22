@@ -104,21 +104,21 @@
             <h2 class="section-title">Direct Encrypt / Decrypt</h2>
             <div class="direct-input-area">
                 <label>Public Key</label>
-                <textarea id="direct-public-key" class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-public-key" class="small-height" placeholder="공개키를 여기에 붙여 넣어 주세요..."></textarea>
                 <label>Private Key</label>
-                <textarea id="direct-private-key" class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-private-key" class="small-height" placeholder="개인키를 여기에 붙여 넣어 주세요..."></textarea>
                 <label>N</label>
-                <textarea id="direct-n" class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-n" class="small-height" placeholder="N 값을 여기에 붙여넣어 주세요..."></textarea>
             </div>
             <div class="crypto-grid">
                 <div class="crypto-unit">
                     <label>평문</label>
-                    <textarea id="plain-text-area" placeholder="Text to encrypt..."></textarea>
+                    <textarea id="plain-text-area" placeholder="암호화할 텍스트 및 복호화된 텍스트 표시..."></textarea>
                     <button class="action-btn encrypt" onclick="encryptText()">Encrypt Now</button>
                 </div>
                 <div class="crypto-unit">
                     <label>암호문</label>
-                    <textarea id="cipher-text-area" placeholder="Text to decrypt..."></textarea>
+                    <textarea id="cipher-text-area" placeholder="복호화할 텍스트 및 암호화된 텍스트 표시..."></textarea>
                     <button class="action-btn decrypt" onclick="decryptText()">Decrypt Now</button>
                 </div>
             </div>
@@ -128,8 +128,8 @@
             <h2 class="section-title">Auto Workflow</h2>
             <div class="workflow-card">
                 <p>키 생성부터 암호화까지 단 한 번의 클릭으로 진행합니다.</p>
-                <textarea placeholder="Enter message to secure..."></textarea>
-                <button class="main-btn accent">Magic Generate & Encrypt</button>
+                <textarea id="auto-workflow-text" placeholder="암호화할 텍스트를 입력해주세요..."></textarea>
+                <button class="main-btn accent" onclick="autoWorkflow(this)">Magic Generate & Encrypt</button>
             </div>
         </section>
 

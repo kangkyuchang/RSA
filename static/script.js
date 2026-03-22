@@ -50,7 +50,7 @@ async function generateManualKey(button) {
 
     const data = await response.json();
     if(data.status == -1) {
-        alert("p,q 중 소수가 아닌 수가 있어 키를 생성하지 못하였습니다.");
+        alert("p, q 중 소수가 아닌 수가 있어 키를 생성하지 못하였습니다.");
         button.disabled = false;
         return;
     }
@@ -231,6 +231,33 @@ async function decryptText() {
     const data = await response.json();
     const plainTextArea = document.getElementById("plain-text-area");
     plainTextArea.value = data.plainText;
+}
+
+async function autoWorkflow(button) {
+    const textArea = document.getElementById("auto-workflow-text");
+    if(!textArea.value) {
+        alert("암호화할 텍스트를 먼저 입력해 주세요.")
+        return;
+    }
+
+    button.disabled = true;
+
+    const playlod = {
+        text: textArea.value
+    }
+
+    const response = await fetch('/api/auto-encrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playlod)
+    });
+
+    const data = await response.json();
+    textArea.value = data.cipherText;
+
+    downloadKey(data, "keyFile")
+
+    button.disabled = false;
 }
 
 function downloadKey(data, fileName) {

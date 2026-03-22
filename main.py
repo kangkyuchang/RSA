@@ -30,6 +30,9 @@ class CrypotographyData(BaseModel):
     N: str
     text: str
 
+class Message(BaseModel):
+    text: str
+
 @app.get("/")
 def read_root():
     return FileResponse("index.html")
@@ -85,6 +88,14 @@ def decrypt(data: CrypotographyData):
     d = generator.base64_to_key(data.privateKey)
     N = generator.base64_to_key(data.N)
     return { "plainText": cipher.decryption(d, N, data.text)}
+
+@app.post("/api/auto-encrypt")
+def autoEncrypt(data: Message):
+    result = generator.generate_auto_key()
+    return {"publicKey": generator.key_to_base64(result[0]), 
+            "privateKey": generator.key_to_base64(result[1]),
+            "N": generator.key_to_base64(result[2]),
+            "cipherText": cipher.encryption(result[0], result[2], data.text)}
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)
