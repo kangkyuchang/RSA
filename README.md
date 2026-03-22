@@ -30,7 +30,7 @@
 |--------|------|-------------|
 | isPrime() | 확률적 소수 판별 | $n - 1 = 2^s \cdot d$ |
 | phi() | 오일러 피 함수 | $\varphi(N) = (p-1)(q-1)$ |
-| createExponent() | 유효한 e 검 | $\gcd(e,\ \varphi(N)) = 1$ |
+| createExponent() | 유효한 e 검증 | $\gcd(e,\ \varphi(N)) = 1$ |
 | extendEuclid() | 모듈러 역원 계산 | $(e \cdot d) \mod \varphi(N) \equiv 1$ |
 
 # 상세 구현 설명
