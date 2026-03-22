@@ -181,6 +181,58 @@ async function isValidE() {
     }
 }
 
+async function encryptText() {
+    const plainTextArea = document.getElementById("plain-text-area").value;
+
+    const publicKeyValue = document.getElementById("direct-public-key").value;
+    const nValue = document.getElementById("direct-n").value;
+
+    if(!plainTextArea || !publicKeyValue || !nValue)
+        return;
+
+    const playlod = {
+        publicKey: publicKeyValue,
+        N: nValue,
+        text: plainTextArea
+    }
+
+    const response = await fetch('/api/encrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playlod)
+    });
+
+    const data = await response.json();
+    const chiperTextArea = document.getElementById("cipher-text-area");
+    chiperTextArea.value = data.cipherText;
+}
+
+async function decryptText() {
+    const chiperTextArea = document.getElementById("cipher-text-area").value;
+
+    const privateKeyValue = document.getElementById("direct-private-key").value;
+    const nValue = document.getElementById("direct-n").value;
+
+    if(!chiperTextArea || !privateKeyValue || !nValue)
+        return;
+
+    const playlod = {
+        privateKey: privateKeyValue,
+        N: nValue,
+        text: chiperTextArea
+    }
+
+    const response = await fetch('/api/decrypt', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(playlod)
+    });
+
+    const data = await response.json();
+    const plainTextArea = document.getElementById("plain-text-area");
+    plainTextArea.value = data.plainText;
+}
+
 function downloadKey(data, fileName) {
     const jsonString = JSON.stringify(data, null, 2);
 

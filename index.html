@@ -104,22 +104,22 @@
             <h2 class="section-title">Direct Encrypt / Decrypt</h2>
             <div class="direct-input-area">
                 <label>Public Key</label>
-                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-public-key" class="small-height" placeholder="Paste your key here"></textarea>
                 <label>Private Key</label>
-                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-private-key" class="small-height" placeholder="Paste your key here"></textarea>
                 <label>N</label>
-                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+                <textarea id="direct-n" class="small-height" placeholder="Paste your key here"></textarea>
             </div>
             <div class="crypto-grid">
                 <div class="crypto-unit">
                     <label>평문</label>
-                    <textarea placeholder="Text to encrypt..."></textarea>
-                    <button class="action-btn encrypt">Encrypt Now</button>
+                    <textarea id="plain-text-area" placeholder="Text to encrypt..."></textarea>
+                    <button class="action-btn encrypt" onclick="encryptText()">Encrypt Now</button>
                 </div>
                 <div class="crypto-unit">
                     <label>암호문</label>
-                    <textarea placeholder="Text to decrypt..."></textarea>
-                    <button class="action-btn decrypt">Decrypt Now</button>
+                    <textarea id="cipher-text-area" placeholder="Text to decrypt..."></textarea>
+                    <button class="action-btn decrypt" onclick="decryptText()">Decrypt Now</button>
                 </div>
             </div>
         </section>

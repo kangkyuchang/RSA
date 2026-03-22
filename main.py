@@ -5,6 +5,7 @@ from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 import keyforge.generator as generator
 import uvicorn
+import cipher.rsa_core as cipher
 
 app = FastAPI()
 
@@ -22,6 +23,12 @@ class ManualKey(BaseModel):
     p: int
     q: int
     e: int
+
+class CrypotographyData(BaseModel):
+    publicKey: Optional[str] = None
+    privateKey: Optional[str] = None
+    N: str
+    text: str
 
 @app.get("/")
 def read_root():
@@ -66,6 +73,18 @@ def check_e_api(number: ValidExponent):
         is_valid = number.e in validNumbers
 
     return { "isValid": is_valid }
+
+@app.post("/api/encrypt")
+def encrypt(data: CrypotographyData):
+    e = generator.base64_to_key(data.publicKey)
+    N = generator.base64_to_key(data.N)
+    return { "cipherText": cipher.encryption(e, N, data.text)}
+
+@app.post("/api/decrypt")
+def decrypt(data: CrypotographyData):
+    d = generator.base64_to_key(data.privateKey)
+    N = generator.base64_to_key(data.N)
+    return { "plainText": cipher.decryption(d, N, data.text)}
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="0.0.0.0", port=8080, reload=True)

@@ -16,38 +16,31 @@ def generate_manual_key(p, q, e):
     if not e in vaildNumber:
         e = secrets.choice(vaildNumber)
         status = 0
-    solution = extend_euclid(e, PHI)
-    d = -1
-    for i in solution:
-        if i < 0:
-            i += PHI
-        tmp = (e * i) -1
-        if tmp >= PHI and tmp % PHI == 0:
-            d = i
+    x, y = extend_euclid(e, PHI)
+    d = y % PHI
+    if (e * d) % PHI != 1:
+        d = x % PHI
+        
     return [status, e, d, N]
 
 def generate_auto_key():
-    prime1 = get_random_prime(1024)
-    prime2 = get_random_prime(1024)
-    while prime1 == prime2:
+    while True:
+        prime1 = get_random_prime(1024)
         prime2 = get_random_prime(1024)
-    N = prime1 * prime2
-    PHI = phi(prime1, prime1)
-    e = 65537
-    while PHI % e == 0:
-        prime2 = get_random_prime(1024)
-        while prime1 == prime2:
-            prime2 = get_random_prime(1024)
+        if prime1 == prime2:
+            continue
         N = prime1 * prime2
-        PHI = phi(prime1, prime1)
-    solution = extend_euclid(e, PHI)
-    d = -1
-    for i in solution:
-        if i < 0:
-            i += PHI
-        tmp = (e * i) -1
-        if tmp >= PHI and tmp % PHI == 0:
-            d = i
+        PHI = phi(prime1, prime2)
+        e = 65537
+        if PHI % e == 0:
+            continue
+        x, y = extend_euclid(e, PHI)
+        d = y % PHI
+        if (e * d) % PHI != 1:
+           d = x % PHI
+
+        if (e * d) % PHI == 1:
+            break
     return [e, d, N]
 
 def get_random_prime(nbits=1024):

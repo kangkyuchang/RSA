@@ -11,12 +11,14 @@ def encryption(key, mod, plain_text):
     return cipher_text
 
 def decryption(key, mod, cipher_text):
-    byte_data = base64.b64decode(cipher_text).decode("utf-8")
+    byte_data = base64.b64decode(cipher_text)    
     encrypted_num = int.from_bytes(byte_data, byteorder="big")
 
     m = pow(encrypted_num, key, mod)
-    byte_length = (m.bit_length + 7) // 8
+
+    byte_length = (m.bit_length() + 7) // 8
     text_bytes = m.to_bytes(byte_length, byteorder="big")
+
     plain_text = text_bytes.decode("utf-8")
 
     return plain_text
