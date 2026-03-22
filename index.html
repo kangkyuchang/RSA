@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA CryptoTool Pro</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <header class="app-header">
+        <div class="logo">RSA CryptoTool <span>Pro</span></div>
+        <div class="status-badge">2048-bit Mode</div>
+    </header>
+
+    <nav class="tab-bar">
+        <button class="tab-link active" onclick="openTab(event, 'manual-gen')">수동 키 생성</button>
+        <button class="tab-link" onclick="openTab(event, 'auto-gen')">자동 키 생성</button>
+        <button class="tab-link" onclick="openTab(event, 'direct-crypto')">직접 암호화</button>
+        <button class="tab-link accent" onclick="openTab(event, 'auto-workflow')">자동 암호화</button>
+    </nav>
+
+    <main class="main-card">
+        
+        <section id="manual-gen" class="tab-content active">
+            <h2 class="section-title">Manual Key Generation</h2>
+            <div class="stepper">
+                <div class="step">
+                    <label>Step 1: 서로 다른 두 개의 소수(p, q) 입력</label>
+                    <div class="input-row">
+                        <div class="input-group-with-error">
+                            <input type="number" id="prime-p-input" placeholder="Prime p" class="math-input" oninput="checkPrime('p')">
+                            <span id="prime-p-error" class="error-msg">❌ 소수가 아닙니다.</span>
+                        </div>
+                        <span class="math-op">×</span>
+                        <div class="input-group-with-error">
+                            <input type="number" id="prime-q-input" placeholder="Prime q" class="math-input" oninput="checkPrime('q')">
+                            <span id="prime-q-error" class="error-msg">❌ 소수가 아닙니다.</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="step">
+                    <label>Step 2: 오일러 피 함수 φ(n)</label>
+                    <div class="result-box">φ(n) = <span id="phi-value" class="highlight"></span></div>
+                </div>
+                <div class="step">
+                    <label>Step 3: 암호화 지수(e) 선택</label>
+                    <div class="chip-group">
+                        <button class="chip active" onclick="selectE(this)">65537</button>
+                        <button class="chip" onclick="selectE(this)">257</button>
+                        <button class="chip" onclick="selectE(this)">17</button>
+                        <button class="chip" onclick="selectE(this)">3</button>
+                        <button class="chip chip-custom-trigger" onclick="toggleCustomE(this)">직접 입력</button>
+                    </div>
+                    <div class="custom-input-wrapper" id="custom-e-wrapper">
+                        <div class="input-with-status">
+                            <input type="number" id="custom-e-input" class="math-input small" placeholder="e 값을 입력하세요" oninput="isValidE()">
+                            <span id="status-e" class="status-msg"></span>
+                        </div>
+                        <button class="small-close-btn" onclick="hideCustomE()">✕</button>
+                    </div>
+                </div>
+                <div class="step">
+                    <label>Step 4: 결과</label>
+                    <div class="key-unit">
+                        <label>Public Key</label>
+                        <textarea id="manual-gen-public" readonly placeholder="생성된 공개키는 여기에 표시됩니다..."></textarea>
+                    </div>
+                    <div class="key-unit">
+                        <label>Private Key</label>
+                        <textarea id="manual-gen-private" readonly placeholder="생성된 개인키는 여기에 표시됩니다..."></textarea>
+                    </div>
+                    <div class="key-unit">
+                        <label>N</label>
+                        <textarea id="manual-gen-n" readonly placeholder="생성된 N은 여기에 표시됩니다..."></textarea>
+                    </div>
+                </div>
+                <button class="main-btn" onclick="generateManualKey(this)">Generate Manual Keys</button>
+            </div>
+        </section>
+
+        <section id="auto-gen" class="tab-content">
+            <h2 class="section-title">Automatic Key Generation</h2>
+            <div class="key-display-grid">
+                <div class="key-unit">
+                    <label>Public Key</label>
+                    <textarea id="auto-gen-public" readonly placeholder="생성된 공개키는 여기에 표시됩니다..."></textarea>
+                </div>
+                <div class="key-unit">
+                    <label>Private Key</label>
+                    <textarea id="auto-gen-private" readonly placeholder="생성된 개인키는 여기에 표시됩니다..."></textarea>
+                </div>
+                <div class="key-unit">
+                    <label>N</label>
+                    <textarea id="auto-gen-n" readonly placeholder="생성된 N은 여기에 표시됩니다..."></textarea>
+                </div>
+            </div>
+            <button id="auto-gen-button" class="main-btn" onclick="generateAutoKey(this)">Generate Key (2048-bit)</button>
+        </section>
+
+        <section id="direct-crypto" class="tab-content">
+            <h2 class="section-title">Direct Encrypt / Decrypt</h2>
+            <div class="direct-input-area">
+                <label>Public Key</label>
+                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+                <label>Private Key</label>
+                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+                <label>N</label>
+                <textarea class="small-height" placeholder="Paste your key here"></textarea>
+            </div>
+            <div class="crypto-grid">
+                <div class="crypto-unit">
+                    <label>평문</label>
+                    <textarea placeholder="Text to encrypt..."></textarea>
+                    <button class="action-btn encrypt">Encrypt Now</button>
+                </div>
+                <div class="crypto-unit">
+                    <label>암호문</label>
+                    <textarea placeholder="Text to decrypt..."></textarea>
+                    <button class="action-btn decrypt">Decrypt Now</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="auto-workflow" class="tab-content">
+            <h2 class="section-title">Auto Workflow</h2>
+            <div class="workflow-card">
+                <p>키 생성부터 암호화까지 단 한 번의 클릭으로 진행합니다.</p>
+                <textarea placeholder="Enter message to secure..."></textarea>
+                <button class="main-btn accent">Magic Generate & Encrypt</button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        &copy; 2026 RSA CryptoTool Pro - Visual Interface Concept
+    </footer>
+</div>
+
+<script src="/static/script.js"></script>
+</body>
+</html>

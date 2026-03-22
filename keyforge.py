@@ -1,27 +1,16 @@
 import secrets
-import random
+import base64
 
-def main():
-    inputNumbers = input("가장 큰 소수 2개를 입력해주세요. ex) 3,5 ")
-    numbers = inputNumbers.split(",")
-    num1 = int(numbers[0])
-    num2 = int(numbers[1])
-    # if not isinstance(num1, int) or not isinstance(num2, int):
-    #     return
-    if not is_prime(num1) or not is_prime(num2):
-        return
-    N = num1 * num2
-    print("소수1: " + str(num1))
-    print("소수2: " + str(num2))
-    print("N: " + str(N))
-    PHI = phi(num1, num2)
-    print("피함수: " + str(PHI))
+def generate_manual_key(p, q, e):
+    if not is_prime(p) or not is_prime(q):
+        return [-1, e, 0, 0]
+    status = 1
+    N = p * q
+    PHI = phi(p, q)
     vaildNumber = create_exponent(PHI)
-    e = input(str(vaildNumber) + " 중 하나를 선택하여 암호화 지수를 생성하여 주세요. ")
-    e = int(e)
     if not e in vaildNumber:
-        return
-    print("암호화 지수: " + str(e))
+        e = secrets.choice(vaildNumber)
+        status = 0
     solution = extend_euclid(e, PHI)
     d = -1
     for i in solution:
@@ -30,7 +19,7 @@ def main():
         tmp = (e * i) -1
         if tmp >= PHI and tmp % PHI == 0:
             d = i
-    print("복호화 지수: " + str(d))
+    return [status, e, d, N]
 
 def generate_auto_key():
     prime1 = get_random_prime(1024)
@@ -39,8 +28,13 @@ def generate_auto_key():
         prime2 = get_random_prime(1024)
     N = prime1 * prime2
     PHI = phi(prime1, prime1)
-    vaildNumber = create_exponent(PHI)
-    e = int(vaildNumber[random.randint(0, len(vaildNumber) - 1)])
+    e = 65537
+    while PHI % e == 0:
+        prime2 = get_random_prime(1024)
+        while prime1 == prime2:
+            prime2 = get_random_prime(1024)
+        N = prime1 * prime2
+        PHI = phi(prime1, prime1)
     solution = extend_euclid(e, PHI)
     d = -1
     for i in solution:
@@ -67,10 +61,15 @@ def trial_division(n):
                   907, 911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
     
     for prime in prime_list:
+        if prime == n:
+            return False
         if pow(n, 1, prime) == 0:
             return True
     
     return False
+
+def g(x):
+    return (x * x) + 1
 
 def miller_rabin(n):
     base_list = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97,
@@ -81,10 +80,10 @@ def miller_rabin(n):
         div = div // 2
         s += 1
     d = (n - 1) // (2 ** s)
-    if pow(2, d, n) == 1:
-        return True
     for base in  base_list:
         value = pow(base, d, n)
+        if value == 1:
+            return True
         for _ in range(0, s):
             # value = pow(base, (2 ** i) * d, n)
             value = pow(value, 2, n)
@@ -98,6 +97,8 @@ def is_prime(n):
     if n <= 1:
         return False
     if is_even(n):
+        return False
+    if trial_division(n):
         return False
     return miller_rabin(n)
 
@@ -128,7 +129,7 @@ def create_exponent(num):
     for i in range(2, num):
         numbers.append(i) 
     for i in cd:
-        operand = int(num / i)
+        operand = num // i
         for i2 in range(1, operand):
             mul = i * i2
             if mul in numbers:
@@ -148,24 +149,31 @@ def extend_euclid(a, b):
     # max = a
     # min = b
     while True:
-        q = int(a / b)
+        q = a // b
         r = a % b
         if r == 0:
             break
-        print("몫: " + str(q) + " 나머지: " + str(r))
+        # print("몫: " + str(q) + " 나머지: " + str(r))
         tmpx1 = x0 - (q * x1)
         tmpy1 = y0 - (q * y1)
-        print("x1: " + str(x0) + "-(" + str(q) + "*" + str(x1) + ")")
-        print("y1: " + str(y0) + "-(" + str(q) + "*" + str(y1) + ")")
+        # print("x1: " + str(x0) + "-(" + str(q) + "*" + str(x1) + ")")
+        # print("y1: " + str(y0) + "-(" + str(q) + "*" + str(y1) + ")")
         a = b
         b = r
         x0 = x1
         y0 = y1
         x1 = tmpx1
         y1 = tmpy1
-        print("a: " + str(a) + ", b: " + str(b) + ", x0: " + str(x0) + ", y0: " + str(y0) + ", x1: " + str(x1) + ", y1: " + str(y1))
-    print("x: " + str(x1) + " y: " + str(y1))
+    #     print("a: " + str(a) + ", b: " + str(b) + ", x0: " + str(x0) + ", y0: " + str(y0) + ", x1: " + str(x1) + ", y1: " + str(y1))
+    # print("x: " + str(x1) + " y: " + str(y1))
     # print((max * x1) + (min * y1))
     return [x1, y1]
 
-print(get_random_prime(1024))
+def key_to_base64(number):
+    byte_len = (number.bit_length() + 7) // 8
+    key_bytes = number.to_bytes(byte_len, byteorder="big")
+    return base64.b64encode(key_bytes).decode('utf-8')
+
+def base64_to_key(key):
+    key_data = base64.b64decode(key)
+    return int.from_bytes(key_data, byteorder="big")
